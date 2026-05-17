@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { DashboardStats } from "@/components/dashboard-stats";
 import { UserTaskSummaryTable } from "@/components/user-task-summary";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface Todo {
   userId: number;
@@ -28,7 +26,7 @@ interface UserTaskSummary {
   completionRate: number;
 }
 
-function DashboardContent() {
+export default function Dashboard() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +36,8 @@ function DashboardContent() {
       try {
         setLoading(true);
 
-        // Fetch todos and users in parallel
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
         const [todosResponse, usersResponse] = await Promise.all([
           fetch("https://jsonplaceholder.typicode.com/todos"),
           fetch("https://jsonplaceholder.typicode.com/users"),
@@ -98,110 +97,18 @@ function DashboardContent() {
       </div>
 
       {/* Statistics Cards */}
-      <Suspense
-        fallback={
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i} className="border">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-4 rounded" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-8 w-16" />
-                  <Skeleton className="h-3 w-24 mt-2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        }
-      >
-        <DashboardStats
-          totalUsers={totalUsers}
-          totalTasks={totalTasks}
-          completedTasks={completedTasks}
-          pendingTasks={pendingTasks}
-          loading={loading}
-        />
-      </Suspense>
+
+      <DashboardStats
+        totalUsers={totalUsers}
+        totalTasks={totalTasks}
+        completedTasks={completedTasks}
+        pendingTasks={pendingTasks}
+        loading={loading}
+      />
 
       {/* User Task Summary Table */}
-      <Suspense
-        fallback={
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-20" />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        }
-      >
-        <UserTaskSummaryTable data={userTaskSummaries} loading={loading} />
-      </Suspense>
-    </div>
-  );
-}
 
-export default function Dashboard() {
-  return (
-    <Suspense
-      fallback={
-        <div className="container mx-auto p-6 space-y-6">
-          <div>
-            <Skeleton className="h-9 w-32 mb-2" />
-            <Skeleton className="h-5 w-64" />
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i} className="border">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-4 rounded" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-8 w-16" />
-                  <Skeleton className="h-3 w-24 mt-2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div>
-            
-          </div>
-          <Card className="border">
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-4 w-20" />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      }
-    >
-      <DashboardContent />
-    </Suspense>
-  );
+      <UserTaskSummaryTable data={userTaskSummaries} loading={loading} />
+    </div>
+  )
 }

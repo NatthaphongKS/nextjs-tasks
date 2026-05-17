@@ -18,12 +18,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Todo {
-  userId: number;
   id: number;
   title: string;
-  completed: boolean;
+  description: string;
+  status: string;
 }
 
 interface PaginationProps {
@@ -115,8 +116,9 @@ export default function Tasks() {
     const fetchTodos = async () => {
       try {
         setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         const response = await fetch(
-          "https://jsonplaceholder.typicode.com/todos",
+          "http://localhost:3000/api/tasks",
         );
         if (!response.ok) {
           throw new Error("Failed to fetch todos");
@@ -140,8 +142,34 @@ export default function Tasks() {
   if (loading) {
     return (
       <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">Tasks</h1>
-        <div className="text-center py-8">Loading...</div>
+        <Skeleton className="h-9 w-24 mb-6" />
+        <div className="rounded-md border p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[80px]"><Skeleton className="h-4 w-6" /></TableHead>
+                <TableHead className="w-[20%]"><Skeleton className="h-4 w-10" /></TableHead>
+                <TableHead><Skeleton className="h-4 w-20" /></TableHead>
+                <TableHead className="w-[120px]"><Skeleton className="h-4 w-12" /></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 10 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-6" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-full" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-full" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="flex justify-center mt-4 gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-8 rounded-md" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -150,12 +178,12 @@ export default function Tasks() {
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Tasks</h1>
       <div className="rounded-md border p-4">
-        <Table >
+        <Table className="table-fixed">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
-              <TableHead>User ID</TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead className="w-[80px]">ID</TableHead>
+              <TableHead className="w-[20%] text-left">Title</TableHead>
+              <TableHead className="text-left">Description</TableHead>
               <TableHead className="w-[120px]">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -163,17 +191,17 @@ export default function Tasks() {
             {currentTodos.map((todo) => (
               <TableRow key={todo.id}>
                 <TableCell className="font-medium">{todo.id}</TableCell>
-                <TableCell>{todo.userId}</TableCell>
-                <TableCell>{todo.title}</TableCell>
+                <TableCell className="text-left">{todo.title}</TableCell>
+                <TableCell className="text-left">{todo.description}</TableCell>
                 <TableCell>
                   <div
                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      todo.completed
+                      todo.status === "completed"
                         ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                         : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                     }`}
                   >
-                    {todo.completed ? "Completed" : "Pending"}
+                    {todo.status}
                   </div>
                 </TableCell>
               </TableRow>

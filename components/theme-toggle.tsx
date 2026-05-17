@@ -7,7 +7,8 @@ export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   
   // Initialize with false to prevent hydration mismatch
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true
+  );
 
   useEffect(() => {
     // Check theme from localStorage or system preference only on client

@@ -23,27 +23,33 @@ interface User {
 
 export function loadingSkeleton() {
   return (
-    <div className="flex justify-center">
-      <div className="flex items-center gap-4">
-        <Skeleton className="h-[20px] w-[100px] rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        <Skeleton className="h-[20px] w-[100px] rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        <Skeleton className="h-[20px] w-[100px] rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
+    <div className="container mx-auto p-6">
+      <Skeleton className="h-9 w-32 mb-6" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i} className="border">
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/2 mt-1" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div>
+                  <Skeleton className="h-4 w-12 mb-1" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-4 w-16 mb-1" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+                <div>
+                  <Skeleton className="h-4 w-12 mb-1" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
@@ -74,6 +80,7 @@ export default function Users() {
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         setLoading(false);
       }
     };
